@@ -13,7 +13,7 @@ export default function NewsItem(props) {
                 || (props.description != null && props.description.length < 100 ? props.description.padEnd(100, ' ') : props.description )
               }
               </p>
-              <a href={props.newsUrl}  target="_blank" className="btn btn-primary">
+              <a href={props.newsUrl}  target="_blank" className="btn btn-dark">
                 Read Full News
               </a>
             </div>

@@ -1,4 +1,4 @@
-const TOP_HEADLINE_URL = "https://newsapi.org/v2/everything?q=bitcoin&apiKey=17feb39d31984ef284b9421cf6d76958"
+const TOP_HEADLINE_URL = "https://newsapi.org/v2/everything?q=all&apiKey=17feb39d31984ef284b9421cf6d76958"
 
 /*
 let news = [
