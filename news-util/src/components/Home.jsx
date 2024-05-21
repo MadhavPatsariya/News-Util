@@ -1,100 +1,53 @@
 import React, { useEffect, useState } from "react";
 import NewsItem from "./NewsItem";
+import PropTypes from 'prop-types'
 import { fetchTopHeadlines } from "../services/fetchNews";
-import { TOP_HEADLINE_URL } from "../utils/constants";
-export default function Home() {
+
+export default function Home(props) {
   const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState([]);  
   const [page, setPage] = useState(1);
   const [totalResults, setTotalResults] = useState(1000);
+  const [nextDisabled, setNextDisabled] = useState(false);
+  const buttonClass = `btn btn-${props.mode === 'light' ? 'dark' : 'light'}`;
 
   useEffect(() => {
-    loadHeadlines(page);
-  }, []);
+    loadHeadlines(page, props.category);
+    if(page + 1 >= Math.ceil(totalResults/5)){
+      setNextDisabled(true);
+    }
+  }, [page, props.category, props.mode]);
 
-  const loadHeadlines = async (pageNumber) => {
+  const loadHeadlines = async (pageNumber, category) => {
+    console.log("Category: " + category);
     setLoading(true);
-    const headlines = await fetchTopHeadlines(pageNumber);
+    const headlines = await fetchTopHeadlines(pageNumber, category);
     setTotalResults(headlines[1]);
     timeout(5000);
     setArticles(headlines[0]);
     setLoading(false);
   };
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const result = await fetch("https://newsapi.org/v2/everything?q=bitcoin&apiKey=17feb39d31984ef284b9421cf6d76958"
-  //   );
-  //     const jsonData = await result.json();
-  //     console.log(jsonData);
-  //    // setArticles(jsonData.articles);
-  //   };
-  //   fetchData();
-  // }, []);
 
-  // const [data, setData] = useState(null);
-  // useEffect(() => {
-  //   fetch("https://newsapi.org/v2/everything?q=bitcoin&apiKey=17feb39d31984ef284b9421cf6d76958")
-  //     .then(response => response.json())
-  //     .then(json =>
-  //       console.log(json.articles))
-  //     .catch(error => console.error(error));
-  // }, []);
-
-  // const [loading, setLoading] = useState(true);
-  // const [articles, setArticles] = useState([]);
-  // const [error, setError] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-   // spinner-border text-success
-  //       console.log("Fetching data from:", TOP_HEADLINE_URL); // Debugging output
-  //       const response = await fetch(TOP_HEADLINE_URL);
-  //       console.log("Fetch response status:", response.status); // Debugging output
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-  //       }
-  //       const jsonData = await response.json();
-  //       console.log("Fetched JSON data:", jsonData); // Debugging output
-  //       setArticles(jsonData.articles); // Assuming jsonData.articles is the correct path
-  //     } catch (error) {
-  //       setError(error.message);
-  //       console.error("Error fetching data:", error); // Debugging output
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
   const timeout = (delay) => {
     return new Promise( res => setTimeout(res, delay) );
   }
+
   const increasePage = async () => {
-    if(page + 1 > Math.ceil(totalResults/10)){
-      return;
-    }
-    var current = page
-    setPage(current + 1);
-    loadHeadlines(page);
-    console.log("Page Increased : " + page);
+    if(page + 1 >= Math.ceil(totalResults/5)) return;
+    await loadHeadlines(page + 1, props.category);
+    setPage(page + 1);
   }
 
   const decreasePage = async () => {
-    if(page == 1){
-      return;
-    }
-    var current = page
-    setPage(current - 1);
-    loadHeadlines(page);
-    console.log("Page Decreased : " + page);
+    await loadHeadlines(page - 1, props.category);
+    setPage(page - 1);
   }
 
   return (
     <div className="container mt-5">
       <h2>Top Headlines for today</h2>
       {
-        loading == true ? (<div className="d-flex justify-content-center">
+        loading === true ? (<div className="d-flex justify-content-center">
         <div className="spinner-border" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -111,17 +64,27 @@ export default function Home() {
                             description={element.description}
                             imageUrl={element.urlToImage}
                             newsUrl={element.url}
+                            mode = {props.mode}
                           />
                         </div>
                       ) : console.log(JSON.stringify(element))
                     )}
                   </div>
-                  <div style={{display: 'flex', gap: '0.5rem', justifyContent: 'center', marginTop: '3em'}}>
-                  <button type="button" className="btn btn-outline-dark" disabled={page==1} onClick={decreasePage}> &larr; Previous</button>
-                  <button type="button" className="btn btn-outline-dark" onClick={increasePage}>Next &rarr;</button>
+                  <div style={{display: 'flex', gap: '0.5rem', justifyContent: 'center', marginTop: '3rem', marginBottom: '3rem'}}>
+                  <button type="button" className={buttonClass} disabled={page===1} onClick={decreasePage}> &larr; Previous</button>
+                  <button type="button" className={buttonClass} disabled={nextDisabled} onClick={increasePage}>Next &rarr;</button>
                   </div>
                   </> )
       }
     </div>
   );
+}
+
+
+Home.propTypes = {
+  category: PropTypes.string,
+}
+
+Home.defaultProps = {
+  category: "general"
 }
