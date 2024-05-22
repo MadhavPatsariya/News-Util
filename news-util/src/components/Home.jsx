@@ -16,6 +16,7 @@ export default function Home(props) {
     if(page + 1 >= Math.ceil(totalResults/5)){
       setNextDisabled(true);
     }
+    document.title = `News-Util - ${props.category.toString().toUpperCase().slice(0,1).concat(props.category.slice(1))}`;
   }, [page, props.category, props.mode]);
 
   const loadHeadlines = async (pageNumber, category) => {
@@ -65,6 +66,9 @@ export default function Home(props) {
                             imageUrl={element.urlToImage}
                             newsUrl={element.url}
                             mode = {props.mode}
+                            author = {element.author}
+                            publishedAt = {element.publishedAt}
+                            source = {element.source.name}
                           />
                         </div>
                       ) : console.log(JSON.stringify(element))
