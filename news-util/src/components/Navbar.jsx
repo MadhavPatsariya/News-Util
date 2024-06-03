@@ -8,7 +8,7 @@ export default function Navbar(props) {
   const darkColor = { backgroundColor: '#e1e2ea' };
   return (
     <div>
-      <nav className="navbar navbar-expand-lg" style={props.mode === 'light' ? lightColor : darkColor}>
+      <nav className="navbar fixed-top navbar-expand-lg" style={props.mode === 'light' ? lightColor : darkColor}>
         <div className="container-fluid">
           <img src={newspaperIcon} alt="Newspaper Icon" style={{ width: "4rem", height: "4rem", objectFit: "contain", marginRight: '0.5rem' }} />
           <Link className="navbar-brand" to="/">

@@ -28,7 +28,7 @@ export default function NewsItem(props) {
               <div class="card-text" style={{marginTop: '0.5rem'}}><small class="text-body-secondary">By {props.author ? props.author : 
                 "Unknown" }
               </small></div>
-              <div class="card-text"><small class="text-body-secondary">Published on {props.publishedAt ? props.publishedAt : 
+              <div class="card-text"><small class="text-body-secondary">Published on {props.publishedAt ? new Date(props.publishedAt).toUTCString() : 
                 "Not Available" }
               </small></div>
               </div>
